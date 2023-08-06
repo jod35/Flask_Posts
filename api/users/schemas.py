@@ -21,3 +21,12 @@ class UserLoginSchema(SQLAlchemySchema):
 
     phone_number = ma.fields.String()
     password = ma.fields.String()
+
+
+class UserSchema(SQLAlchemySchema):
+    class Meta:
+        model = User
+
+    id = ma.fields.String()
+    username = ma.fields.String()
+    phone_number = ma.fields.String()

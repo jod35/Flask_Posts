@@ -13,11 +13,13 @@ class User:
 """
 
 
+def generate_uuid():
+    return str(uuid.uuid4())
+
+
 # database model for Users
 class User(db.Model):
-    id = db.Column(
-        db.String(255), primary_key=True, default=str(uuid.uuid4()), unique=True
-    )
+    id = db.Column(db.String(255), primary_key=True, default=generate_uuid, unique=True)
     username = db.Column(db.String(25), nullable=False, unique=True)
     password = db.Column(db.Text(), nullable=False)
     phone_number = db.Column(PhoneNumberType(), unique=True)
@@ -53,3 +55,7 @@ class User(db.Model):
             db.session.query(cls.username).filter_by(username=username).first()
             is not None
         )
+
+    @classmethod
+    def get_all(cls, page_number, per_page):
+        return cls.query.paginate(page=page_number, per_page=per_page)

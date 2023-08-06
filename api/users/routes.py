@@ -1,8 +1,8 @@
-from flask import Blueprint, jsonify
-from apifairy import body
-from .schemas import UserSignUpSchema, UserLoginSchema
+from flask import Blueprint, jsonify, request
+from apifairy import body, response
+from .schemas import UserSignUpSchema, UserLoginSchema, UserSchema
 from sqlalchemy_utils.types.phone_number import PhoneNumberParseException
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required
 from .db_models import User
 
 users_bp = Blueprint("users", __name__)
@@ -57,13 +57,35 @@ def login(args):
             "refresh": create_refresh_token(identity=user.username),
         }
 
-        return jsonify(
-            {
-                "status": 200,
-                "message": "User logged in successfully",
-                "user": {"name": user.username, "phone_number": user.phone_number.national},
-                "token_pair": token_pair
-            }
+        return (
+            jsonify(
+                {
+                    "status": 200,
+                    "message": "User logged in successfully",
+                    "user": {
+                        "name": user.username,
+                        "phone_number": user.phone_number.national,
+                    },
+                    "token_pair": token_pair,
+                }
+            ),
+            200,
         )
 
-    return "Hello`"
+    return jsonify({"error": "Inavlid phone number or password"}), 400
+
+
+@users_bp.get("/users")
+@jwt_required()
+# @response(signup_schema)
+def list_all_users():
+    page_number = int(request.args.get("page", None))
+    per_page = int(request.args.get("users"))
+
+    schema = UserSchema()
+
+    user_list = User.get_all(page_number=page_number, per_page=per_page)
+
+    users = schema.dump(user_list, many=True)
+
+    return jsonify({"status": 200, "users": users})
