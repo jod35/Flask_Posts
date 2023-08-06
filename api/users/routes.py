@@ -9,25 +9,20 @@ users_bp = Blueprint("users", __name__)
 
 
 @users_bp.post("/user/register")
-@body(UserSignUpSchema)
-def register(args):
+def register():
     """Create a user account
-
-    Args:
-        args (dict): a payload of data to create a user account
     """
+    data = request.get_json()
 
-    user_exists = User.username_exists(args.get("username"))
+    user_exists = User.username_exists(data.get("username"))
 
-    schema = UserSignUpSchema()
-
-    if not user_exists and (args.get("password") == args.get("repeat_password")):
+    if not user_exists and (data.get("password") == data.get("repeat_password")):
         try:
             new_user = User(
-                username=args.get("username"), phone_number=args.get("phone_number")
+                username=data.get("username"), phone_number=data.get("phone_number")
             )
 
-            new_user.set_password(args.get("password"))
+            new_user.set_password(data.get("password"))
 
             new_user.save()
 
@@ -46,12 +41,13 @@ def register(args):
 
 
 @users_bp.post("/user/login/")
-@body(UserLoginSchema)
-def login(args):
+def login():
     """Login to user account"""
-    user = User.query.filter_by(phone_number=args.get("phone_number")).first()
 
-    if user and user.check_password(args.get("password")):
+    data = request.get_json()
+    user = User.query.filter_by(phone_number=data.get("phone_number")).first()
+
+    if user and user.check_password(data.get("password")):
         token_pair = {
             "access": create_access_token(identity=user.username),
             "refresh": create_refresh_token(identity=user.username),
@@ -77,7 +73,6 @@ def login(args):
 
 @users_bp.get("/users")
 @jwt_required()
-# @response(signup_schema)
 def list_all_users():
     page_number = int(request.args.get("page", None))
     per_page = int(request.args.get("users"))

@@ -12,17 +12,19 @@ posts_bp = Blueprint("posts", __name__)
 
 @posts_bp.post("/new/post/")
 @jwt_required()
-@body(PostCreateSchema)
 def create_a_post(args):
     """Create a post"""
+    data = request.get_json()
 
     try:
         username = get_jwt_identity()
-        print(username)
 
         author = User.query.filter_by(username=username).first()
 
-        new_post = Post(**args)
+        new_post = Post(
+            title = data.get('title'),
+            body = data.get('body')
+        )
 
         new_post.user_id = author.id
 
@@ -73,16 +75,18 @@ def get_post(id):
 
 @posts_bp.patch("/post/<int:id>")
 @jwt_required()
-@body(PostCreateSchema)
-def update_post(id,args):
+def update_post(id):
     """
     Update a post by id
 
     """
+
+    data = request.get_json()
+
     post = Post.query.filter_by(id=id).first()
 
-    post.title = args.get('title')
-    post.body = args.get('body')
+    post.title = data.get('title')
+    post.body = data.get('body')
 
     db.session.commit()
 
