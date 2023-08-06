@@ -84,6 +84,6 @@ def list_all_users():
 
     user_list = User.get_all(page_number=page_number, per_page=per_page)
 
-    users =  UserSchema().dump(user_list, many=True)
+    users = UserSchema().dump(user_list, many=True)
 
     return jsonify({"status": 200, "users": users})

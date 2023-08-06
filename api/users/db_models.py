@@ -25,9 +25,9 @@ class User(db.Model):
     password = db.Column(db.Text(), nullable=False)
     phone_number = db.Column(PhoneNumberType(), unique=True)
     date_joined = db.Column(db.DateTime(), default=datetime.utcnow)
-    
+
     # Define the one-to-many relationship with Post model
-    posts = db.relationship(Post, backref='user', lazy=True)
+    posts = db.relationship(Post, backref="user", lazy=True)
 
     def __repr__(self):
         return f"User {self.username}"
