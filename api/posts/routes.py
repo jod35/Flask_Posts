@@ -3,7 +3,8 @@ from .db_models import Post
 from ..users.db_models import User
 from .schemas import PostSchema,PostCreateSchema
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from apifairy import body
+from apifairy import body, response
+from ..exts import db
 
 
 posts_bp = Blueprint("posts", __name__)
@@ -47,13 +48,58 @@ def list_all_posts():
         page_number = int(request.args.get("page", None))
         per_page = int(request.args.get("posts", None))
 
-        posts = Post.get_all(page_number=page_number, per_page=per_page)
+        posts = Post.query.paginate(page=page_number,per_page=per_page)
 
         post_list = PostSchema().dump(posts, many=True)
-    except:
-        return jsonify({"error": "Opps! Something is wrong "})
-    finally:
-        posts = Post.query.all()
 
-        post_list = PostSchema().dump(posts, many=True)
         return jsonify({"status": 200, "posts": post_list}), 200
+    except  Exception as e:
+        return jsonify({"error": "Opps! Something is wrong ","error":str(e)})
+
+
+@posts_bp.get("/post/<int:id>")
+@jwt_required()
+def get_post(id):
+    """
+    Retrieve a post by id
+
+    """
+    post = Post.query.filter_by(id=id).first()
+
+    response = PostSchema().dump(post)
+    
+    return jsonify({"status": 200, "post": response})
+
+
+@posts_bp.patch("/post/<int:id>")
+@jwt_required()
+@body(PostCreateSchema)
+def update_post(id,args):
+    """
+    Update a post by id
+
+    """
+    post = Post.query.filter_by(id=id).first()
+
+    post.title = args.get('title')
+    post.body = args.get('body')
+
+    db.session.commit()
+
+    response = PostSchema().dump(post)
+    
+    return jsonify({"status": 200, "post": response})
+
+
+@posts_bp.delete( "/post/<int:id>")
+@jwt_required()
+def delete_post(id):
+    """
+    Retrieve a post by id
+
+    """
+    post = Post.query.filter_by(id=id).first()
+
+    post.delete()
+    
+    return {} , 204
