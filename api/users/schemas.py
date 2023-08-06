@@ -13,3 +13,11 @@ class UserSignUpSchema(SQLAlchemySchema):
     phone_number = auto_field()
     password = auto_field()
     repeat_password = ma.fields.String(required=True)
+
+
+class UserLoginSchema(SQLAlchemySchema):
+    class Meta:
+        model = User
+
+    phone_number = ma.fields.String()
+    password = ma.fields.String()

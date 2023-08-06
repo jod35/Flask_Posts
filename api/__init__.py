@@ -1,6 +1,6 @@
 # app.py
 from flask import Flask
-from .exts import db, migrate, api
+from .exts import db, migrate, api, jwt
 from .posts.routes import posts_bp
 from .users.routes import users_bp
 
@@ -22,6 +22,7 @@ def create_app():
     api.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
+    jwt.init_app(app)
 
     # register all blueprints
     app.register_blueprint(posts_bp, url_prefix="/v1")
