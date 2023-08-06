@@ -19,7 +19,6 @@ def create_app():
     app.config.from_prefixed_env()
 
     # initialize third party apps
-    api.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
