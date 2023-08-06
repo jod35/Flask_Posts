@@ -82,10 +82,8 @@ def list_all_users():
     page_number = int(request.args.get("page", None))
     per_page = int(request.args.get("users"))
 
-    schema = UserSchema()
-
     user_list = User.get_all(page_number=page_number, per_page=per_page)
 
-    users = schema.dump(user_list, many=True)
+    users =  UserSchema().dump(user_list, many=True)
 
     return jsonify({"status": 200, "users": users})

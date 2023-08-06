@@ -3,6 +3,7 @@ from datetime import datetime
 from sqlalchemy_utils import PhoneNumber
 from sqlalchemy_utils.types.phone_number import PhoneNumberType
 from werkzeug.security import generate_password_hash, check_password_hash
+from ..posts.db_models import Post
 import uuid
 
 """
@@ -24,6 +25,9 @@ class User(db.Model):
     password = db.Column(db.Text(), nullable=False)
     phone_number = db.Column(PhoneNumberType(), unique=True)
     date_joined = db.Column(db.DateTime(), default=datetime.utcnow)
+    
+    # Define the one-to-many relationship with Post model
+    posts = db.relationship(Post, backref='user', lazy=True)
 
     def __repr__(self):
         return f"User {self.username}"
