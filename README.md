@@ -18,7 +18,7 @@ Follow the instructions below to set up and run the API on your local machine.
 
 ```bash
 git clone https://github.com/jod35/Flask_Posts.git
-cd your_project
+cd Flask_Posts
 ```
 
 2. Set up a virtual environment:
