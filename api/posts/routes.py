@@ -117,18 +117,18 @@ def invite_user(post_id, username):
 
     Args:
         post_id (int): ID of post a user is to view
-        username (_type_): username of a user to be invited
+        username (str): username of a user to be invited
     """
 
     #get logged in user from JWT
-    jwt_identity = get_jwt_identity()
+    current_username = get_jwt_identity()
 
-    sender =  User.query.get_or_404(username=jwt_identity)
+    sender =  User.query.filter_by(username=current_username).first()
     
     sender_id = sender.id
 
     #query for receiver via id provided in path param
-    receiver = User.objects.get_or_404(username=username) 
+    receiver = User.query.filter_by(username=username).first()
 
     receiver_id = receiver.id
 
@@ -150,7 +150,7 @@ def invite_user(post_id, username):
     db.session.add(invitation)
     db.session.commit()
 
-    return jsonify({'message': 'Invitation sent successfully'}), 201
+    return jsonify({"status": 200, "message":  f"{username} has been invited to {post.title}"}), 201
 
 
 
@@ -172,14 +172,27 @@ def accept_invitation(invitation_id):
     return jsonify({'message': 'Invitation accepted successfully'}), 200
 
 
-@posts_bp.get('/invitations/<int:invitation_id>/decline', methods=['PUT'])
-def decline_invitation(invitation_id):
-    invitation = Invitation.query.get_or_404(invitation_id)
+@posts_bp.put('/post/<int:post_id>/revoke_user_invite/<string:username>/')
+@jwt_required()
+def revoke_invitation(post_id,username):
+    """Revoke user invitation
 
-    if not invitation:
-        return jsonify({'message': 'Invitation not found'}), 404
+    Args:
+        post_id (int): ID of post to revoke access from
+        username (_type_): Username of the user whose access if to revoked
+    """
+    post = Post.query.get_or_404(post_id)
+    receiver = User.query.filter_by(username = username).first()
+
+    #current user's name
+    _user_name = get_jwt_identity()
+
+    current_user = User.query.filter_by(username = _user_name).first()
+
+
+    invitation = Invitation.query.filter(sender_id = current_user.id, receiver_id = receiver.id,post_id=post.id)
 
     db.session.delete(invitation)
     db.session.commit()
 
-    return jsonify({'message': 'Invitation declined successfully'}), 200
+    return jsonify({"status": 200, "message": f"Username access has been revoked to {post.title}"}), 200
