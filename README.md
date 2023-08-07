@@ -74,42 +74,9 @@ The API provides the following endpoints:
 | /v1/users/register| POST   | Create a new user                      |                        |
 
 
+The api documentation will be found at `http://127.0.0.1:5000/docs`
 
 ### Authentication
 
 Some API endpoints will require you provide a JWT in the ```Authentication``` header using ```Bearer <JWT>```
-### Error Handling
 
-Describe how the API handles errors, such as invalid requests or server errors.
-
-## Testing
-
-Explain how to run the test suite to ensure the API is working correctly. Provide examples of test cases.
-
-```bash
-pytest
-```
-
-## Deployment
-
-Explain the process of deploying the API to a production environment. Include any necessary configuration steps, server setup, or additional considerations.
-
-## Contributing
-
-Describe how other developers can contribute to this project. Provide guidelines for submitting pull requests, reporting issues, and code style.
-
-## License
-
-Mention the license under which the project is distributed. For example, MIT, Apache 2.0, etc.
-
-## Acknowledgments
-
-If you used any third-party libraries, APIs, or code snippets, acknowledge and give credit to the respective authors or projects here.
-
-## Contact
-
-Provide your contact information, such as email or social media handles, in case users or developers want to get in touch with you.
-
----
-
-Note: This README template is just a starting point. Make sure to customize it to fit your specific project requirements and guidelines.

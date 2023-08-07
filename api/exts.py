@@ -12,7 +12,7 @@ migrate = Migrate() # for easy database migrations
 # framework for helping us to create and document our endpoints with Swagger
 api = Api(
     title="Flask Posts",
-    doc="/",
+    doc="/docs",
     version="1.0",
     description="As simple REST API built for a simple posts service",
     security='apiKey', authorizations={

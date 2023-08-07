@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_restx import Namespace, Resource, fields, reqparse
-from .schemas import UserSignUpSchema, UserLoginSchema, UserSchema
+from .schemas import UserSchema
 from sqlalchemy_utils.types.phone_number import PhoneNumberParseException
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required
 from .db_models import User
@@ -14,7 +14,7 @@ user_parser.add_argument("page", type=int, required=True, help="page is required
 user_parser.add_argument("users", type=int, required=True, help="users is required")
 
 
-# a serialization/ validation model for signing up
+# an input/ validation model for signing up
 register_model = users_nspace.model(
     "register_user",
     {
@@ -25,7 +25,7 @@ register_model = users_nspace.model(
     },
 )
 
-
+#an input schema for login
 user_login_model = users_nspace.model(
     "login_user", {"phone_number": fields.String(), "password": fields.String()}
 )
