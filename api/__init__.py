@@ -1,8 +1,8 @@
 # app.py
 from flask import Flask
 from .exts import db, migrate, api, jwt
-from .posts.routes import posts_bp
-from .users.routes import users_bp
+from .posts.routes import posts_nspace
+from .users.routes import users_nspace
 
 
 def create_app():
@@ -22,13 +22,16 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
+    api.init_app(app)
 
-    # register all blueprints
-    app.register_blueprint(posts_bp, url_prefix="/v1")
-    app.register_blueprint(users_bp, url_prefix="/v1")
+    # register all namespaces
+    api.add_namespace(posts_nspace, path="/v1")
 
+    api.add_namespace(users_nspace, path="/v1")
+
+    # exposee some vars to Flask shell
     @app.shell_context_processor
     def make_shell():
-        return {"db": db, "app": app}
+        return {"db": db}
 
     return app

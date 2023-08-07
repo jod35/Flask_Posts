@@ -30,12 +30,20 @@ class User(db.Model):
     posts = db.relationship(Post, backref="user", lazy=True)
 
     # Define relationships for invitations sent
-    invitations_sent = db.relationship('Invitation', foreign_keys='Invitation.sender_id',
-                                    backref='sender', lazy='dynamic')
-    
+    invitations_sent = db.relationship(
+        "Invitation",
+        foreign_keys="Invitation.sender_id",
+        backref="sender",
+        lazy="dynamic",
+    )
+
     # Define relationships for invitations reciev
-    invitations_received = db.relationship('Invitation', foreign_keys='Invitation.receiver_id',
-                                        backref='receiver', lazy='dynamic')
+    invitations_received = db.relationship(
+        "Invitation",
+        foreign_keys="Invitation.receiver_id",
+        backref="receiver",
+        lazy="dynamic",
+    )
 
     def __repr__(self):
         return f"User {self.username}"

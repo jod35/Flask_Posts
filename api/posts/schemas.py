@@ -5,6 +5,7 @@ from .db_models import Post
 class PostSchema(SQLAlchemySchema):
     class Meta:
         model = Post
+
     id = auto_field()
     title = auto_field()
     body = auto_field()
@@ -14,7 +15,6 @@ class PostSchema(SQLAlchemySchema):
 class PostCreateSchema(SQLAlchemySchema):
     class Meta:
         model = Post
-    
+
     title = auto_field()
     body = auto_field()
-
