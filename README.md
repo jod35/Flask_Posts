@@ -1,5 +1,4 @@
 # Flask_Posts
-Sure! Below is a sample README.md file for a Flask RESTful API project:
 
 This project is a Flask RESTful API that provides endpoints for various tasks. It is built using Python and Flask, and it follows the RESTful API principles to provide a straightforward and efficient way to interact with the application.
 
