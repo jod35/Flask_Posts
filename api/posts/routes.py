@@ -113,6 +113,12 @@ def delete_post(id):
 @posts_bp.post('/post/<int:post_id>/invite_user/<string:username>')
 @jwt_required()
 def invite_user(post_id, username):
+    """Invite a user to view a post
+
+    Args:
+        post_id (int): ID of post a user is to view
+        username (_type_): username of a user to be invited
+    """
 
     #get logged in user from JWT
     jwt_identity = get_jwt_identity()
@@ -145,3 +151,35 @@ def invite_user(post_id, username):
     db.session.commit()
 
     return jsonify({'message': 'Invitation sent successfully'}), 201
+
+
+
+@posts_bp.put('/posts/<int:invitation_id>/accept')
+def accept_invitation(invitation_id):
+    """Accept Invitation
+
+    Args:
+        invitation_id (int): ID of invitation to accept
+    """
+    invitation = Invitation.query.get(invitation_id)
+
+    if not invitation:
+        return jsonify({'message': 'Invitation not found'}), 404
+
+    invitation.accepted = True
+    db.session.commit()
+
+    return jsonify({'message': 'Invitation accepted successfully'}), 200
+
+
+@posts_bp.get('/invitations/<int:invitation_id>/decline', methods=['PUT'])
+def decline_invitation(invitation_id):
+    invitation = Invitation.query.get_or_404(invitation_id)
+
+    if not invitation:
+        return jsonify({'message': 'Invitation not found'}), 404
+
+    db.session.delete(invitation)
+    db.session.commit()
+
+    return jsonify({'message': 'Invitation declined successfully'}), 200
