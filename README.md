@@ -21,7 +21,7 @@ git clone https://github.com/your_username/your_project.git
 cd your_project
 ```
 
-2. (Optional but recommended) Set up a virtual environment:
+2. Set up a virtual environment:
 
 ```bash
 python -m venv venv
@@ -39,9 +39,10 @@ pip install -r requirements.txt
 You may need to configure certain settings based on your environment or requirements. Create a `.env` file in the project root and specify the necessary environment variables, such as database connection details, API keys, etc.
 
 ```plaintext
-DATABASE_URL=your_database_connection_string
-SECRET_KEY=your_secret_key
-# Add other environment variables as needed
+FLASK_SECRET_KEY=your-secret-key
+FLASK_SQLALCHEMY_DATABASE_URI=your-sqlalchemy-uri
+FLASK__DEBUG=debug-value
+
 ```
 
 ### Running the API
@@ -57,17 +58,23 @@ The API will be accessible at `http://127.0.0.1:5000/`.
 ### API Endpoints
 
 The API provides the following endpoints:
+| Endpoint         | Method | Description                              | Query Parameters       |
+|------------------|--------|------------------------------------------|------------------------|
+| /v1/posts       | GET    | Get a paginated list of all posts        | page (optional)        |
+|                  |        |                                          | per_page (optional)    |
+| /v1/posts/:id   | GET    | Get a specific post by its ID            |                        |
+| /v1/posts       | POST   | Create a new post                        | title, content, user_id |
+| /v1/posts/:id   | PATCH    | Update an existing post                  |        |
+| /v1/posts/:id   | DELETE | Delete a post by its ID                  |                        |
+| /v1/users       | GET    | Get a list of all users                  |   page,users           |
+| /v1/users/login   | POST | Create a post                            |                        |
+| /v1/users/register| POST   | Create a new user                     |                         |
 
-- **`/api/resource`**: Endpoint to retrieve a resource. (GET)
-- **`/api/resource/<id>`**: Endpoint to retrieve, update, or delete a specific resource by its ID. (GET, PUT, DELETE)
-- **`/api/resource/create`**: Endpoint to create a new resource. (POST)
 
-Replace `/api/resource` with your actual resource endpoints.
 
 ### Authentication
 
-(Optional) If your API requires authentication, describe the authentication process and the endpoints that require authentication here.
-
+Some API endpoints will require you provide a JWT in the ```Authentication``` header using ```Bearer <JWT>```
 ### Error Handling
 
 Describe how the API handles errors, such as invalid requests or server errors.

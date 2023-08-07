@@ -99,7 +99,7 @@ def update_post(id):
 @jwt_required()
 def delete_post(id):
     """
-    Retrieve a post by id
+    Delete a post by id
 
     """
     post = Post.query.filter_by(id=id).first()

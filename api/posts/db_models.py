@@ -37,3 +37,16 @@ class Post(db.Model):
     @classmethod
     def get_all(cls, page_number, per_page):
         return cls.query.paginate(page_number, per_page)
+
+
+
+# database model for in
+class Invitation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.String(255), db.ForeignKey('user.id'), nullable=False)
+    receiver_id = db.Column(db.String(255), db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    accepted = db.Column(db.Boolean, default=False)
+
+    def __repr__(self):
+        return f'<Invitation {self.id}>'
