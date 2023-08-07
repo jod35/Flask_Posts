@@ -8,12 +8,10 @@ from .db_models import User
 users_nspace = Namespace("users", "a namespace for users and auth")
 
 
-
-#a parser for query params
+# a parser for query params
 user_parser = reqparse.RequestParser()
-user_parser.add_argument('page', type=int, required=True, help='page is required')
-user_parser.add_argument('users', type=int, required=True, help='users is required')
-
+user_parser.add_argument("page", type=int, required=True, help="page is required")
+user_parser.add_argument("users", type=int, required=True, help="users is required")
 
 
 # a serialization/ validation model for signing up
@@ -28,23 +26,18 @@ register_model = users_nspace.model(
 )
 
 
-
 user_login_model = users_nspace.model(
-    "login_user",{
-        'phone_number' : fields.String(),
-        'password': fields.String()
-    }
+    "login_user", {"phone_number": fields.String(), "password": fields.String()}
 )
 
 
 @users_nspace.route("/user/register")
 class RegisterUser(Resource):
-
     @users_nspace.expect(register_model)
-    @users_nspace.response(201,"User has been created successfully")
-    def post():
+    @users_nspace.response(201, "User has been created successfully")
+    def post(self):
         """Create a user account"""
-        data = users_nspace.payload #data coming from request
+        data = users_nspace.payload  # data coming from request
 
         user_exists = User.username_exists(data.get("username"))
 
@@ -59,67 +52,65 @@ class RegisterUser(Resource):
                 new_user.save()
 
                 return (
-                    jsonify({"status": 200, "message": "User has been registered"}),
+                    {"status": 200, "message": "User has been registered"},
                     201,
                 )
 
             except PhoneNumberParseException as e:
                 return (
-                    jsonify({"message": "Oops, you may have entered a wrong number"}),
+                    {"message": "Oops, you may have entered a wrong number"},
                     400,
                 )
 
             except Exception as e:
-                return jsonify({"error": str(e)})
+                return {"error": str(e)}, 500
 
-        return jsonify({"message": "User account already exists"})
+        return {"message": "User account already exists"}
 
 
 @users_nspace.route("/user/login/")
 class LoginUser(Resource):
-
     @users_nspace.expect(user_login_model)
     @users_nspace.response(400, "Invalid Phonenumber or Password")
     @users_nspace.response(200, "Successful login")
-    def post():
+    def post(self):
         """Login to user account"""
 
         data = users_nspace.payload
         user = User.query.filter_by(phone_number=data.get("phone_number")).first()
 
+        #check if user exists ans password is right
         if user and user.check_password(data.get("password")):
             token_pair = {
                 "access": create_access_token(identity=user.username),
                 "refresh": create_refresh_token(identity=user.username),
             }
 
+            #return a token pair to the user (login)
             return (
-                jsonify(
-                    {
-                        "status": 200,
-                        "message": "User logged in successfully",
-                        "user": {
-                            "name": user.username,
-                            "phone_number": user.phone_number.national,
-                        },
-                        "token_pair": token_pair,
-                    }
-                ),
+                {
+                    "status": 200,
+                    "message": "User logged in successfully",
+                    "user": {
+                        "name": user.username,
+                        "phone_number": user.phone_number.national,
+                    },
+                    "token_pair": token_pair,
+                },
                 200,
             )
 
-        return jsonify({"error": "Inavlid phone number or password"}), 400
+        return {"error": "Inavlid phone number or password"}, 400
 
 
 @users_nspace.route("/users")
 class GetUsers(Resource):
     @jwt_required()
-    @users_nspace.response(200,"")
-    @users_nspace.doc(params={'page':'page number','users':'number of users'})
-    def get():
+    @users_nspace.response(200, "")
+    @users_nspace.doc(params={"page": "page number", "users": "number of users"}, security="apiKey")
 
-        """Get paginated list of users
-        """
+    def get(self):
+        """Get paginated list of users"""
         page_number = int(request.args.get("page", None))
         per_page = int(request.args.get("users"))
 
@@ -127,4 +118,4 @@ class GetUsers(Resource):
 
         users = UserSchema().dump(user_list, many=True)
 
-        return jsonify({"status": 200, "users": users})
+        return {"status": 200, "users": users}, 200
