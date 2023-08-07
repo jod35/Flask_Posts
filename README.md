@@ -58,17 +58,17 @@ The API will be accessible at `http://127.0.0.1:5000/`.
 ### API Endpoints
 
 The API provides the following endpoints:
-| Endpoint         | Method | Description                              | Query Parameters       |
-|------------------|--------|------------------------------------------|------------------------|
-| /v1/posts       | GET    | Get a paginated list of all posts        | page , posts      |
-| /v1/posts/:id   | GET    | Get a specific post by its ID            |                        |
-| /v1/new/post       | POST   | Create a new post                        |                        |
-| /v1/posts/:id   | PATCH    | Update an existing post                |                        |
-| /v1/posts/:id   | DELETE | Delete a post by its ID                  |                        |
-| /v1/post/:post_id/invite_user/:username| POST |Invite a user to view a post |                |
-| /v1//posts/:invitation_id/accept| PUT |Accept invite to view post |                |
-| /v1/post/:post_id/invite_user/:username| POST |Invite a user to view a post |                |
-| /post/:post_id/revoke_user_invite/:username/| PUT |Revoke a user invite to a post |                |
+| Endpoint         | Method | Description                              | Query Parameters       | Path Parameters | 
+|------------------|--------|------------------------------------------|------------------------|-----------------|
+| /v1/posts       | GET    | Get a paginated list of all posts        | page , posts      |                      |
+| /v1/posts/:id   | GET    | Get a specific post by its ID            |                        | id
+| /v1/new/post       | POST   | Create a new post                        |                        |        |
+| /v1/posts/:id   | PATCH    | Update an existing post                |                        | id |
+| /v1/posts/:id   | DELETE | Delete a post by its ID                  |                        | id |
+| /v1/post/:post_id/invite_user/:username| POST |Invite a user to view a post |                |post_id , username |
+| /v1//posts/:invitation_id/accept| PUT |Accept invite to view post |                | invitation_id |
+| /v1/post/:post_id/invite_user/:username| POST |Invite a user to view a post |                | post_id , username|
+| /post/:post_id/revoke_user_invite/:username/| PUT |Revoke a user invite to a post |                | post_id ,username |
 | /v1/users       | GET    | Get a paginated list of all users                  |   page , users           |
 | /v1/users/login   | POST | Create a JWT token pair (Login)          |                         |
 | /v1/users/register| POST   | Create a new user                      |                        |
