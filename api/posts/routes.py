@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from .db_models import Post
+from .db_models import Post,Invitation
 from ..users.db_models import User
 from .schemas import PostSchema,PostCreateSchema
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -107,3 +107,41 @@ def delete_post(id):
     post.delete()
     
     return {} , 204
+
+
+
+@posts_bp.post('/post/<int:post_id>/invite_user/<string:username>')
+@jwt_required()
+def invite_user(post_id, username):
+
+    #get logged in user from JWT
+    jwt_identity = get_jwt_identity()
+
+    sender =  User.query.get_or_404(username=jwt_identity)
+    
+    sender_id = sender.id
+
+    #query for receiver via id provided in path param
+    receiver = User.objects.get_or_404(username=username) 
+
+    receiver_id = receiver.id
+
+    #get the post you want to invite a user to view
+    post = Post.get_by_id(post_id)
+
+    #handle sending invitation to missing receiver
+    if not (receiver and post):
+        return jsonify({'message': 'Invalid receiver, or post ID'}), 404
+
+    #check if invitation has already been sent
+    invitation = Invitation.query.filter_by(sender_id=sender_id, receiver_id=receiver_id, post_id=post_id).first()
+
+    if invitation:
+        return jsonify({'message': 'Invitation already sent'}), 400
+
+    #create invitation
+    invitation = Invitation(sender_id=sender_id, receiver_id=receiver_id, post_id=post_id)
+    db.session.add(invitation)
+    db.session.commit()
+
+    return jsonify({'message': 'Invitation sent successfully'}), 201
