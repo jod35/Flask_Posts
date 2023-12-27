@@ -28,7 +28,7 @@ class CreatePost(Resource):
     @posts_nspace.expect(create_post_model)
     @posts_nspace.response(201, "Post Created succesfully")
     @posts_nspace.response(400,"Something wrong with data sent")
-    def post():
+    def post(self):
         """Create a post"""
         data = posts_nspace.payload
         try:
@@ -60,7 +60,7 @@ class CreatePost(Resource):
 @posts_nspace.route("/posts/")
 class GetAllPosts(Resource):
     @posts_nspace.doc(params={'page':'page number','posts':'post per page'})
-    def get():
+    def get(self):
         """List all posts"""
 
         try:
@@ -81,7 +81,7 @@ class PostRetrieveUpdateDelete(Resource):
     @posts_nspace.response(200,"request successful")
     @posts_nspace.response(404,"Post not found")
     @jwt_required()
-    def get(id):
+    def get(self,id):
         """
         Retrieve a post by id
 
@@ -94,7 +94,7 @@ class PostRetrieveUpdateDelete(Resource):
 
     @jwt_required()
     @posts_nspace.expect(create_post_model)
-    def patch(id):
+    def patch(self,id):
         """
         Update a post by id
 
@@ -115,7 +115,7 @@ class PostRetrieveUpdateDelete(Resource):
 
     @jwt_required()
     @posts_nspace.response(204,"Post deleted")
-    def delete(id):
+    def delete(self,id):
         """
         Delete a post by id
 
@@ -131,7 +131,7 @@ class PostRetrieveUpdateDelete(Resource):
 class InviteUser(Resource):
     @jwt_required()
     @posts_nspace.response(404,"Post, user not found")
-    def post(post_id, username):
+    def post(self,post_id, username):
         """Invite a user to view a post
 
         Args:
@@ -187,7 +187,7 @@ class InviteUser(Resource):
 @posts_nspace.route("/posts/<int:invitation_id>/accept")
 class AcceptInvite(Resource):
     @posts_nspace.response(404,"Invitation not found")
-    def put(invitation_id):
+    def put(self,invitation_id):
         """Accept Invitation
 
         Args:
@@ -207,7 +207,7 @@ class AcceptInvite(Resource):
 @posts_nspace.route("/post/<int:post_id>/revoke_user_invite/<string:username>/")
 class RevokeInvite(Resource):
     @jwt_required()
-    def put(post_id, username):
+    def put(self,post_id, username):
         """Revoke user invitation
 
         Args:

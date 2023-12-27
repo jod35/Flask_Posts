@@ -3,9 +3,9 @@ from flask import Flask
 from .exts import db, migrate, api, jwt
 from .posts.routes import posts_nspace
 from .users.routes import users_nspace
+from .config import Config
 
-
-def create_app():
+def create_app(config=Config):
     """
     App factory.
     - Create an instance of it to configure app for many scenarios
@@ -16,7 +16,7 @@ def create_app():
     app = Flask(__name__)
 
     # load environment variables from .env
-    app.config.from_prefixed_env()
+    app.config.from_object(config)
 
     # initialize third party apps
     db.init_app(app)
