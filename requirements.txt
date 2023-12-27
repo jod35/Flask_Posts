@@ -32,5 +32,5 @@ rpds-py==0.15.2
 SQLAlchemy==2.0.19
 SQLAlchemy-Utils==0.41.1
 typing-extensions==4.7.1
-Werkzeug==2.3.6
+Werkzeug==2.3.8
 zipp==3.17.0
