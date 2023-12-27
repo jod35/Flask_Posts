@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import request
 from flask_restx import Namespace, Resource, fields, reqparse
 from .schemas import UserSchema
 from sqlalchemy_utils.types.phone_number import PhoneNumberParseException
@@ -25,7 +25,7 @@ register_model = users_nspace.model(
     },
 )
 
-#an input schema for login
+# an input schema for login
 user_login_model = users_nspace.model(
     "login_user", {"phone_number": fields.String(), "password": fields.String()}
 )
@@ -56,7 +56,7 @@ class RegisterUser(Resource):
                     201,
                 )
 
-            except PhoneNumberParseException as e:
+            except PhoneNumberParseException:
                 return (
                     {"message": "Oops, you may have entered a wrong number"},
                     400,
@@ -79,14 +79,14 @@ class LoginUser(Resource):
         data = users_nspace.payload
         user = User.query.filter_by(phone_number=data.get("phone_number")).first()
 
-        #check if user exists ans password is right
+        # check if user exists ans password is right
         if user and user.check_password(data.get("password")):
             token_pair = {
                 "access": create_access_token(identity=user.username),
                 "refresh": create_refresh_token(identity=user.username),
             }
 
-            #return a token pair to the user (login)
+            # return a token pair to the user (login)
             return (
                 {
                     "status": 200,
@@ -107,8 +107,9 @@ class LoginUser(Resource):
 class GetUsers(Resource):
     @jwt_required()
     @users_nspace.response(200, "")
-    @users_nspace.doc(params={"page": "page number", "users": "number of users"}, security="apiKey")
-
+    @users_nspace.doc(
+        params={"page": "page number", "users": "number of users"}, security="apiKey"
+    )
     def get(self):
         """Get paginated list of users"""
         page_number = int(request.args.get("page", None))

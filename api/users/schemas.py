@@ -1,8 +1,7 @@
 # a module for input and output schemas (serializers)
-from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
+from marshmallow_sqlalchemy import SQLAlchemySchema
 import marshmallow as ma
 from .db_models import User
-
 
 
 class UserSchema(SQLAlchemySchema):

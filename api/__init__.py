@@ -5,6 +5,7 @@ from .posts.routes import posts_nspace
 from .users.routes import users_nspace
 from .config import Config
 
+
 def create_app(config=Config):
     """
     App factory.
